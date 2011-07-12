@@ -1,5 +1,8 @@
 package plugins.nherve.toolbox.imageanalysis;
 
+import icy.preferences.IcyPreferences;
+import icy.preferences.XMLPreferences;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -229,5 +232,9 @@ public abstract class ImageAnalysisModule extends Algorithm {
 
 	public void setLinkWithFollowing(boolean linkWithFollowing) {
 		this.linkWithFollowing = linkWithFollowing;
+	}
+	
+	public XMLPreferences getPreferences() {
+		return IcyPreferences.pluginsRoot().node(getClass().getName());
 	}
 }

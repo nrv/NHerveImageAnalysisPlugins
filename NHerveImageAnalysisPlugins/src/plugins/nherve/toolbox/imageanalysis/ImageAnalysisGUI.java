@@ -45,8 +45,6 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 		setDefaultParameters(new ImageAnalysisParameters());
 	}
 
-	public abstract String getPreferenceNodeName();
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
@@ -204,7 +202,7 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 
 		mainPanel = GuiUtil.generatePanel();
 		frame = GuiUtil.generateTitleFrame(module.getName(), mainPanel, new Dimension(500, 100), true, true, true, true);
-		new WindowPositionSaver(frame, getPreferenceNodeName(), new Point(0, 0), new Dimension(500, 800));
+		new WindowPositionSaver(frame, getPreferences().absolutePath(), new Point(0, 0), new Dimension(500, 800));
 		mainPanel.setLayout(new BorderLayout());
 
 		moduleGUI = module.createGUI(getDefaultParameters());
