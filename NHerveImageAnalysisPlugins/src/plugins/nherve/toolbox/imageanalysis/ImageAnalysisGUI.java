@@ -138,9 +138,11 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 			context = getBackupObject();
 		}
 
-		MaskEditor me = MaskEditor.getRunningInstance(true);
-		MaskStack stack = me.getBackupObject();
-		context.setStack(stack);
+		if (module.needSequence()) {
+			MaskEditor me = MaskEditor.getRunningInstance(true);
+			MaskStack stack = me.getBackupObject();
+			context.setStack(stack);
+		}
 	}
 
 	protected ImageAnalysisParameters getDefaultParameters() {
@@ -262,7 +264,7 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 
 	@Override
 	public void stopInterface() {
-	
+
 	}
 
 }
