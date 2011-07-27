@@ -1,14 +1,11 @@
 package plugins.nherve.toolbox.imageanalysis;
 
 import icy.gui.dialog.MessageDialog;
-import icy.gui.frame.IcyFrame;
 import icy.gui.util.GuiUtil;
-import icy.gui.util.WindowPositionSaver;
 import icy.sequence.Sequence;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,8 +26,6 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 
 	private ImageAnalysisModule module;
 	private ImageAnalysisParameters defaultParameters;
-	private IcyFrame frame;
-	private JPanel mainPanel;
 	private JPanel moduleGUI;
 	private JButton btOpenMaskEditor;
 	private JButton btStart;
@@ -170,7 +165,9 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 
 			if (c == cbDisplay) {
 				setLogEnabled(cbDisplay.isSelected());
-				module.setLogEnabled(cbDisplay.isSelected());
+				if (module != null) {
+					module.setLogEnabled(cbDisplay.isSelected());
+				}
 			}
 		}
 	}
@@ -199,13 +196,13 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 	}
 
 	@Override
-	public void startInterface() {
-		TaskManager.initAll();
+	public Dimension getDefaultFrameDimension() {
+		return new Dimension(500, 800);
+	}
 
-		mainPanel = GuiUtil.generatePanel();
-		frame = GuiUtil.generateTitleFrame(module.getName(), mainPanel, new Dimension(500, 100), true, true, true, true);
-		new WindowPositionSaver(frame, getPreferences().absolutePath(), new Point(0, 0), new Dimension(500, 800));
-		mainPanel.setLayout(new BorderLayout());
+	@Override
+	public void fillInterface(JPanel mainPanel) {
+		TaskManager.initAll();
 
 		moduleGUI = module.createGUI(getDefaultParameters());
 		if (moduleGUI != null) {
@@ -239,18 +236,6 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 			buttons = GuiUtil.createLineBoxPanel(Box.createHorizontalGlue(), cbDisplay, Box.createHorizontalGlue(), btStart, Box.createHorizontalGlue(), btStop, Box.createHorizontalGlue());
 		}
 		mainPanel.add(buttons, BorderLayout.SOUTH);
-
-		frame.addFrameListener(this);
-		frame.setVisible(true);
-		frame.pack();
-		addIcyFrame(frame);
-
-		setLogEnabled(cbDisplay.isSelected());
-		if (module != null) {
-			module.setLogEnabled(cbDisplay.isSelected());
-		}
-
-		frame.requestFocus();
 	}
 
 	@Override
@@ -264,7 +249,7 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 
 	@Override
 	public void stopInterface() {
-
+		TaskManager.shutdownAll();
 	}
 
 }
