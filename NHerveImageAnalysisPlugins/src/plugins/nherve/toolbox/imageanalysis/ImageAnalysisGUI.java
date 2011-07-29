@@ -4,7 +4,6 @@ import icy.gui.dialog.MessageDialog;
 import icy.gui.util.GuiUtil;
 import icy.sequence.Sequence;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -206,7 +205,7 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 
 		moduleGUI = module.createGUI(getDefaultParameters());
 		if (moduleGUI != null) {
-			mainPanel.add(new JScrollPane(GuiUtil.createPageBoxPanel(moduleGUI, Box.createVerticalGlue())), BorderLayout.CENTER);
+			mainPanel.add(new JScrollPane(GuiUtil.createPageBoxPanel(moduleGUI, Box.createVerticalGlue())));
 		}
 
 		btStart = new JButton("Launch");
@@ -235,7 +234,7 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 		} else {
 			buttons = GuiUtil.createLineBoxPanel(Box.createHorizontalGlue(), cbDisplay, Box.createHorizontalGlue(), btStart, Box.createHorizontalGlue(), btStop, Box.createHorizontalGlue());
 		}
-		mainPanel.add(buttons, BorderLayout.SOUTH);
+		mainPanel.add(buttons);
 	}
 
 	@Override
