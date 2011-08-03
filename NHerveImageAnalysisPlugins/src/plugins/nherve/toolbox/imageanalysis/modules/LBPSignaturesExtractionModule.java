@@ -116,7 +116,7 @@ public class LBPSignaturesExtractionModule extends WithoutGUIModuleDefaultImpl {
 
 			putObject(context, getParameterInternalName(OBJ_TM), tm);
 			List<VectorSignature> sigs = SignatureExtractor.cast(signatureExtractor.extractSignatures(simg, squares));
-			if (Thread.interrupted() || (sigs == null)) {
+			if (Thread.currentThread().isInterrupted() || (sigs == null)) {
 				return false;
 			}
 			tm.shutdownNow();
