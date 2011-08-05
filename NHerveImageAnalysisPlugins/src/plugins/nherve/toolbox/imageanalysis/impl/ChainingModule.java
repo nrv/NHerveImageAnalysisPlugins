@@ -11,6 +11,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -141,21 +143,24 @@ public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements
 
 		@Override
 		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D)g;
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			switch (state) {
 			case ImageAnalysisModule.STOPPED:
-				g.setColor(Color.RED);
+				g2.setColor(Color.RED);
 				break;
 			case ImageAnalysisModule.RUNNING:
-				g.setColor(Color.ORANGE);
+				g2.setColor(Color.ORANGE);
 				break;
 			case ImageAnalysisModule.FINISHED:
-				g.setColor(Color.GREEN);
+				g2.setColor(Color.GREEN);
 				break;
 			default:
-				g.setColor(getBackground());
+				g2.setColor(getBackground());
 				break;
 			}
-			g.fillOval((getWidth() - DIM) / 2, (getHeight() - DIM) / 2, DIM - 1, DIM - 1);
+			
+			g2.fillOval((getWidth() - DIM) / 2, (getHeight() - DIM) / 2, DIM - 1, DIM - 1);
 		}
 
 		@Override
