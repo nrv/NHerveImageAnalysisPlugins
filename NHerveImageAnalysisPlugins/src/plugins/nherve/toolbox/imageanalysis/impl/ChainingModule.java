@@ -34,14 +34,12 @@ import plugins.nherve.toolbox.NherveToolbox;
 import plugins.nherve.toolbox.image.mask.MaskStack;
 import plugins.nherve.toolbox.imageanalysis.ImageAnalysisContext;
 import plugins.nherve.toolbox.imageanalysis.ImageAnalysisException;
-import plugins.nherve.toolbox.imageanalysis.ImageAnalysisGUI;
 import plugins.nherve.toolbox.imageanalysis.ImageAnalysisModule;
 import plugins.nherve.toolbox.imageanalysis.ImageAnalysisModuleListener;
-import plugins.nherve.toolbox.imageanalysis.ImageAnalysisParameterException;
 import plugins.nherve.toolbox.imageanalysis.ImageAnalysisParameters;
 import plugins.nherve.toolbox.imageanalysis.ImageAnalysisProcessListener;
 
-public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements ActionListener, ImageAnalysisProcessListener {
+public abstract class ChainingModule extends ModuleGroup implements ActionListener, ImageAnalysisProcessListener {
 
 	private class LaunchButton extends JButton implements ImageAnalysisModuleListener {
 		private static final long serialVersionUID = -7597996048640565055L;
@@ -177,9 +175,7 @@ public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements
 		}
 	}
 
-	private List<ImageAnalysisModule> modules;
 	private Map<JButton, ImageAnalysisModule> moduleLaunchers;
-	private Map<ImageAnalysisModule, JPanel> modulePanels;
 	private Map<ImageAnalysisModule, JCheckBox> moduleSelected;
 	private boolean usePopUp;
 	private boolean popUpExpandedByDefault;
@@ -196,9 +192,7 @@ public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements
 		super(name);
 
 		this.usePopUp = usePopUp;
-		modules = new ArrayList<ImageAnalysisModule>();
 		moduleLaunchers = new HashMap<JButton, ImageAnalysisModule>();
-		modulePanels = new HashMap<ImageAnalysisModule, JPanel>();
 		moduleSelected = null;
 
 		setParallelProcessingActivated(false);
@@ -249,26 +243,16 @@ public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements
 		}
 	}
 
-	public boolean addModule(ImageAnalysisModule e) {
-		e.setParentModule(this);
-		return modules.add(e);
-	}
 
-	public boolean addModuleAndLinkWithFollowing(ImageAnalysisModule e) {
-		e.setLinkWithFollowing(true);
-		return addModule(e);
-	}
 
 	@Override
 	public boolean analyze(ImageAnalysisContext context) throws ImageAnalysisException {
-		Iterator<ImageAnalysisModule> it = modules.iterator();
+		Iterator<ImageAnalysisModule> it = iterator();
 		ImageAnalysisModule module = null;
 		while (it.hasNext()) {
 			module = it.next();
 			if ((moduleSelected == null) || (moduleSelected.get(module).isSelected())) {
 				if (isParallelProcessingActivated() && module.isLinkWithFollowing()) {
-					System.out.println("TADA");
-
 					List<ImageAnalysisModule> mods = new ArrayList<ImageAnalysisModule>();
 					mods.add(module);
 					while (it.hasNext() && module.isLinkWithFollowing()) {
@@ -289,15 +273,6 @@ public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public void checkParametersBeforeAnalysis(ImageAnalysisContext context) throws ImageAnalysisParameterException {
-		// TODO : verification en cascade
-	}
-
-	public void clearModules() {
-		modules.clear();
 	}
 
 	@Override
@@ -335,7 +310,7 @@ public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements
 		modulePanels.clear();
 		moduleSelected.clear();
 
-		for (ImageAnalysisModule m : modules) {
+		for (ImageAnalysisModule m : this) {
 			JPanel modulePanel = new JPanel();
 			modulePanel.setOpaque(false);
 			modulePanel.setLayout(new BorderLayout());
@@ -371,19 +346,7 @@ public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements
 	}
 
 	@Override
-	public void getParametersFromGui(JPanel p, ImageAnalysisContext c) {
-		for (ImageAnalysisModule m : modules) {
-			if (modulePanels.containsKey(m)) {
-				m.getParametersFromGui(modulePanels.get(m), c);
-			}
-		}
-	}
-
-	public abstract void initModules(ImageAnalysisParameters defaultParameters);
-
-	@Override
 	public void notifyProcessEnded(ImageAnalysisModule module) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -393,69 +356,14 @@ public abstract class ChainingModule extends WithGUIModuleDefaultImpl implements
 	}
 
 	@Override
-	public void populateWithDefaultParameterValues(ImageAnalysisParameters parameters) {
-
-	}
-
-	@Override
-	public void setLogEnabled(boolean display) {
-		super.setLogEnabled(display);
-
-		if (modules != null) {
-			for (ImageAnalysisModule m : modules) {
-				m.setLogEnabled(display);
-			}
-		}
-	}
-
-	@Override
-	public void setGui(ImageAnalysisGUI gui) {
-		super.setGui(gui);
-
-		if (modules != null) {
-			for (ImageAnalysisModule m : modules) {
-				if (m instanceof WithGUIModuleDefaultImpl) {
-					((WithGUIModuleDefaultImpl) m).setGui(gui);
-				}
-			}
-		}
-	}
-
-	@Override
 	public void setState(int state, boolean propagate) {
 		super.setState(state, propagate);
 
-		if ((modules != null) && propagate) {
-			for (ImageAnalysisModule m : modules) {
+		if (propagate) {
+			for (ImageAnalysisModule m : this) {
 				m.setState(state, propagate);
 			}
 		}
-	}
-
-	@Override
-	public String toString() {
-		String fullName = getName() + " (";
-		boolean first = true;
-		for (ImageAnalysisModule m : modules) {
-			if (first) {
-				first = false;
-			} else {
-				fullName += " - ";
-			}
-			fullName += m.getName();
-		}
-		fullName += ")";
-		return fullName;
-	}
-
-	@Override
-	public boolean needSequence() {
-		for (ImageAnalysisModule m : modules) {
-			if (m.needSequence()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean isParallelProcessingActivated() {
