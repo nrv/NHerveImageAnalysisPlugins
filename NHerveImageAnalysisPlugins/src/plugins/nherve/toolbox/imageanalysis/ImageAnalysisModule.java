@@ -27,6 +27,7 @@ public abstract class ImageAnalysisModule extends Algorithm {
 	private List<String> neededParameters;
 	private ImageAnalysisModule parentModule;
 	private boolean linkWithFollowing;
+	private boolean debugEnabled;
 	
 	private Map<ImageAnalysisModuleListener, ImageAnalysisModuleListener> listeners;
 	
@@ -38,6 +39,7 @@ public abstract class ImageAnalysisModule extends Algorithm {
 		listeners = new HashMap<ImageAnalysisModuleListener, ImageAnalysisModuleListener>();
 		parentModule = null;
 		setLinkWithFollowing(false);
+		setDebugEnabled(false);
 	}
 	
 	public void addListener(ImageAnalysisModuleListener l) {
@@ -236,5 +238,13 @@ public abstract class ImageAnalysisModule extends Algorithm {
 	
 	public XMLPreferences getPreferences() {
 		return IcyPreferences.pluginsRoot().node(getClass().getName());
+	}
+
+	public boolean isDebugEnabled() {
+		return debugEnabled;
+	}
+
+	public void setDebugEnabled(boolean debugEnabled) {
+		this.debugEnabled = debugEnabled;
 	}
 }

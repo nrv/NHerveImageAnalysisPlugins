@@ -75,6 +75,17 @@ public abstract class ModuleGroup extends WithGUIModuleDefaultImpl implements It
 	}
 
 	@Override
+	public void setDebugEnabled(boolean debugEnabled) {
+		super.setLogEnabled(debugEnabled);
+
+		if (modules != null) {
+			for (ImageAnalysisModule m : modules) {
+				m.setDebugEnabled(debugEnabled);
+			}
+		}
+	}
+
+	@Override
 	public void setGui(ImageAnalysisGUI gui) {
 		super.setGui(gui);
 

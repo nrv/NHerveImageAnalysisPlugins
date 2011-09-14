@@ -13,6 +13,7 @@ import java.awt.event.ItemListener;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -31,6 +32,8 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 	private JButton btClear;
 	private JButton btStop;
 	private JCheckBox cbDisplay;
+	private JCheckBox cbDebug;
+	private JLabel currentImage;
 
 	private ImageAnalysisContext noSequenceContext;
 
@@ -126,6 +129,7 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 				throw new RuntimeException(e);
 			}
 			context.setWorkingImage(getCurrentSequence().getFirstImage());
+			context.setWorkingName(getCurrentSequence().getName());
 
 			addBackupObject(context);
 		} else {
@@ -168,6 +172,12 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 					module.setLogEnabled(cbDisplay.isSelected());
 				}
 			}
+
+			if (c == cbDebug) {
+				if (module != null) {
+					module.setDebugEnabled(cbDebug.isSelected());
+				}
+			}
 		}
 	}
 
@@ -178,7 +188,13 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 
 	@Override
 	public void sequenceHasChanged() {
-
+		if (module.needSequence()) {
+			if (hasCurrentSequence()) {
+				currentImage.setText(getCurrentSequence().getName());
+			} else {
+				currentImage.setText("none");
+			}
+		}
 	}
 
 	@Override
@@ -202,6 +218,12 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 	@Override
 	public void fillInterface(JPanel mainPanel) {
 		TaskManager.initAll();
+
+		if (module.needSequence()) {
+			currentImage = new JLabel("none");
+			JPanel p1 = GuiUtil.createLineBoxPanel(new JLabel("Current image : "), Box.createHorizontalGlue(), currentImage);
+			mainPanel.add(p1);
+		}
 
 		moduleGUI = module.createGUI(getDefaultParameters());
 		if (moduleGUI != null) {
@@ -228,11 +250,14 @@ public abstract class ImageAnalysisGUI extends BackupSingletonPlugin<ImageAnalys
 		cbDisplay = new JCheckBox("Log");
 		cbDisplay.addItemListener(this);
 
+		cbDebug = new JCheckBox("Debug");
+		cbDebug.addItemListener(this);
+
 		JPanel buttons = null;
 		if (module.needSequence()) {
-			buttons = GuiUtil.createLineBoxPanel(Box.createHorizontalGlue(), cbDisplay, Box.createHorizontalGlue(), btStart, Box.createHorizontalGlue(), btClear, Box.createHorizontalGlue(), btStop, Box.createHorizontalGlue(), btOpenMaskEditor, Box.createHorizontalGlue());
+			buttons = GuiUtil.createLineBoxPanel(Box.createHorizontalGlue(), cbDisplay, cbDebug, Box.createHorizontalGlue(), btStart, Box.createHorizontalGlue(), btClear, Box.createHorizontalGlue(), btStop, Box.createHorizontalGlue(), btOpenMaskEditor, Box.createHorizontalGlue());
 		} else {
-			buttons = GuiUtil.createLineBoxPanel(Box.createHorizontalGlue(), cbDisplay, Box.createHorizontalGlue(), btStart, Box.createHorizontalGlue(), btStop, Box.createHorizontalGlue());
+			buttons = GuiUtil.createLineBoxPanel(Box.createHorizontalGlue(), cbDisplay, cbDebug, Box.createHorizontalGlue(), btStart, Box.createHorizontalGlue(), btStop, Box.createHorizontalGlue());
 		}
 		mainPanel.add(buttons);
 	}

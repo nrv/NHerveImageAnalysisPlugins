@@ -13,6 +13,7 @@ public class ImageAnalysisContext {
 	private ImageAnalysisParameters parameters;
 	private MaskStack stack;
 	private IcyBufferedImage workingImage;
+	private String workingName;
 	private IcyBufferedImage backupImage;
 	private Map<String, Object> objects;
 	private ImageAnalysisProcessor processor;
@@ -32,6 +33,18 @@ public class ImageAnalysisContext {
 		return parameters.containsParameter(p);
 	}
 
+	public IcyBufferedImage getBackupImage() {
+		return backupImage;
+	}
+
+	public Object getObject(String k) {
+		return objects.get(k);
+	}
+
+	public Set<String> getObjectNames() {
+		return objects.keySet();
+	}
+
 	public boolean getParameterAsBoolean(String p) throws ImageAnalysisParameterException {
 		return parameters.getParameterAsBoolean(p);
 	}
@@ -48,18 +61,58 @@ public class ImageAnalysisContext {
 		return parameters.getParameterAsString(p);
 	}
 
+	ImageAnalysisParameters getParameters() {
+		return parameters;
+	}
+
 	public MaskStack getStack() {
 		return stack;
+	}
+
+	public IcyBufferedImage getWorkingImage() {
+		return workingImage;
+	}
+
+	public String getWorkingName() {
+		return workingName;
+	}
+
+	public boolean processAndNotify(final ImageAnalysisModule module, final ImageAnalysisProcessListener lst, final boolean display) throws ImageAnalysisException {
+		return processor.processAndNotify(this, module, lst, display);
+	}
+
+	public boolean processAndWait(final ImageAnalysisModule module, final boolean display) throws ImageAnalysisException {
+		return processor.processAndWait(this, module, display);
+	}
+
+	public boolean processParallelAndWait(final List<ImageAnalysisModule> modules, final boolean display) throws ImageAnalysisException {
+		return processor.processParallelAndWait(this, modules, display);
+	}
+
+	public void putObject(String k, Object v) {
+		objects.put(k, v);
+	}
+
+	public void reInitProcessor() {
+		processor.reInit();
+	}
+
+	public void removeObject(String k) {
+		objects.remove(k);
+	}
+
+	public void setBackupImage(IcyBufferedImage backupImage) {
+		this.backupImage = backupImage;
 	}
 
 	public void setParameter(String p, boolean v) {
 		parameters.setParameter(p, v);
 	}
-
+	
 	public void setParameter(String p, double v) {
 		parameters.setParameter(p, v);
 	}
-
+	
 	public void setParameter(String p, int v) {
 		parameters.setParameter(p, v);
 	}
@@ -72,59 +125,15 @@ public class ImageAnalysisContext {
 		this.stack = stack;
 	}
 
-	public Object getObject(String k) {
-		return objects.get(k);
-	}
-
-	public void putObject(String k, Object v) {
-		objects.put(k, v);
-	}
-
-	public void removeObject(String k) {
-		objects.remove(k);
-	}
-
-	public IcyBufferedImage getBackupImage() {
-		return backupImage;
-	}
-
-	public void setBackupImage(IcyBufferedImage backupImage) {
-		this.backupImage = backupImage;
-	}
-
-	public IcyBufferedImage getWorkingImage() {
-		return workingImage;
-	}
-
 	public void setWorkingImage(IcyBufferedImage workingImage) {
 		this.workingImage = workingImage;
 	}
 
-	public Set<String> getObjectNames() {
-		return objects.keySet();
-	}
-
-	public boolean processAndWait(final ImageAnalysisModule module, final boolean display) throws ImageAnalysisException {
-		return processor.processAndWait(this, module, display);
-	}
-	
-	public boolean processAndNotify(final ImageAnalysisModule module, final ImageAnalysisProcessListener lst, final boolean display) throws ImageAnalysisException {
-		return processor.processAndNotify(this, module, lst, display);
-	}
-	
-	public boolean processParallelAndWait(final List<ImageAnalysisModule> modules, final boolean display) throws ImageAnalysisException {
-		return processor.processParallelAndWait(this, modules, display);
+	public void setWorkingName(String workingName) {
+		this.workingName = workingName;
 	}
 
 	public void stopRunningProcesses() {
 		processor.stopRunningProcesses();
-	}
-
-	public void reInitProcessor() {
-		processor.reInit();
-	}
-
-	ImageAnalysisParameters getParameters() {
-		return parameters;
 	}
 }

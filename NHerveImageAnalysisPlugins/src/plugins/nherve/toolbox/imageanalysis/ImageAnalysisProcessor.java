@@ -108,6 +108,7 @@ public class ImageAnalysisProcessor {
 			ImageAnalysisContext context = new ImageAnalysisContext();
 			context.addAllParameters(defaultParameters, true);
 			context.setWorkingImage(image);
+			context.setWorkingName("");
 			MaskStack stack = new MaskStack(image.getWidth(), image.getHeight());
 			context.setStack(stack);
 
