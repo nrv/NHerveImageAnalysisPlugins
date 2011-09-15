@@ -12,5 +12,6 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
         <javaElement handleIdentifier="=NHerveImageAnalysisPlugins/src"/>
+        <file path="/NHerveImageAnalysisPlugins/Manifest.MF"/>
     </selectedElements>
 </jardesc>
