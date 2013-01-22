@@ -5,10 +5,10 @@ import icy.image.IcyBufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import plugins.nherve.toolbox.image.feature.SegmentableBufferedImage;
-import plugins.nherve.toolbox.image.feature.SupportRegion;
+import plugins.nherve.toolbox.image.feature.SegmentableIcyBufferedImage;
+import plugins.nherve.toolbox.image.feature.IcySupportRegion;
 import plugins.nherve.toolbox.image.feature.region.GridFactory;
-import plugins.nherve.toolbox.image.feature.region.Pixel;
+import plugins.nherve.toolbox.image.feature.region.IcyPixel;
 import plugins.nherve.toolbox.image.feature.region.RectangleSupportRegion;
 import plugins.nherve.toolbox.image.mask.Mask;
 import plugins.nherve.toolbox.imageanalysis.ImageAnalysisContext;
@@ -48,19 +48,19 @@ public class SquareRegionsExtractionModule extends WithoutGUIModuleDefaultImpl {
 
 		
 		IcyBufferedImage image = context.getWorkingImage();
-		SegmentableBufferedImage simg = new SegmentableBufferedImage(image);
+		SegmentableIcyBufferedImage simg = new SegmentableIcyBufferedImage(image);
 		
 		int w = getParameterAsInt(context, PRM_W);
 		
-		List<Pixel> pixels = null;
+		List<IcyPixel> pixels = null;
 		if (msk != null) {
 			pixels = GridFactory.getMaskAsPixels(msk);
 		} else {
 			pixels = GridFactory.getAllPixels(simg);
 		}
 		
-		List<SupportRegion> squares = new ArrayList<SupportRegion>();
-		for (Pixel px : pixels) {
+		List<IcySupportRegion> squares = new ArrayList<IcySupportRegion>();
+		for (IcyPixel px : pixels) {
 			RectangleSupportRegion rsr = new RectangleSupportRegion(simg, (int) px.x, (int) px.y, w);
 			squares.add(rsr);
 		}

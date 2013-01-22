@@ -7,14 +7,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import plugins.nherve.toolbox.concurrent.TaskManager;
-import plugins.nherve.toolbox.image.feature.SegmentableBufferedImage;
+import plugins.nherve.toolbox.image.feature.SegmentableIcyBufferedImage;
 import plugins.nherve.toolbox.image.feature.SignatureExtractor;
-import plugins.nherve.toolbox.image.feature.SupportRegion;
+import plugins.nherve.toolbox.image.feature.IcySupportRegion;
 import plugins.nherve.toolbox.image.feature.descriptor.MultiThreadedSignatureExtractor;
 import plugins.nherve.toolbox.image.feature.descriptor.MultiThreadedSignatureExtractor.Listener;
 import plugins.nherve.toolbox.image.feature.lbp.LBPToolbox;
 import plugins.nherve.toolbox.image.feature.lbp.LocalBinaryPattern;
-import plugins.nherve.toolbox.image.feature.region.Pixel;
+import plugins.nherve.toolbox.image.feature.region.IcyPixel;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 import plugins.nherve.toolbox.image.toolboxes.ColorSpaceTools;
@@ -98,14 +98,14 @@ public class LBPSignaturesExtractionModule extends WithoutGUIModuleDefaultImpl {
 		}
 
 		IcyBufferedImage image = context.getWorkingImage();
-		SegmentableBufferedImage simg = new SegmentableBufferedImage(image);
+		SegmentableIcyBufferedImage simg = new SegmentableIcyBufferedImage(image);
 
 		try {
 			@SuppressWarnings("unchecked")
-			List<SupportRegion> squares = (List<SupportRegion>) getObject(context, getParameterAsString(context, PRM_REGIONS));
+			List<IcySupportRegion> squares = (List<IcySupportRegion>) getObject(context, getParameterAsString(context, PRM_REGIONS));
 
 			desc.preProcess(simg);
-			MultiThreadedSignatureExtractor<SegmentableBufferedImage> signatureExtractor = new MultiThreadedSignatureExtractor<SegmentableBufferedImage>(desc);
+			MultiThreadedSignatureExtractor<SegmentableIcyBufferedImage> signatureExtractor = new MultiThreadedSignatureExtractor<SegmentableIcyBufferedImage>(desc);
 
 			for (Listener l : listeners) {
 				signatureExtractor.add(l);
@@ -123,10 +123,10 @@ public class LBPSignaturesExtractionModule extends WithoutGUIModuleDefaultImpl {
 			removeObject(context, getParameterInternalName(OBJ_TM));
 
 			@SuppressWarnings("unchecked")
-			List<Pixel> pixels = (List<Pixel>) getObject(context, getParameterAsString(context, PRM_PIXELS));
+			List<IcyPixel> pixels = (List<IcyPixel>) getObject(context, getParameterAsString(context, PRM_PIXELS));
 
 			List<PixelSignatureData> myData = new ArrayList<PixelSignatureData>();
-			Iterator<Pixel> iPixels = pixels.iterator();
+			Iterator<IcyPixel> iPixels = pixels.iterator();
 			Iterator<VectorSignature> iSigs = sigs.iterator();
 			while (iPixels.hasNext()) {
 				PixelSignatureData aData = new PixelSignatureData();
