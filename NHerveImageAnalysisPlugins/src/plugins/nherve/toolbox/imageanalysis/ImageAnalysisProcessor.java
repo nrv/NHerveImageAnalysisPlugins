@@ -32,10 +32,10 @@ public class ImageAnalysisProcessor {
 
 		private void process() throws ImageAnalysisException {
 			module.checkParametersBeforeAnalysis(context);
-			module.log("About to launch " + module.getName());
+			module.info("About to launch " + module.getName());
 			module.setState(ImageAnalysisModule.RUNNING, false);
 			if (module.analyze(context)) {
-				module.log("Just after analyze " + module.getName());
+				module.info("Just after analyze " + module.getName());
 				module.setState(ImageAnalysisModule.FINISHED, false);
 			}
 		}

@@ -15,6 +15,7 @@ import plugins.nherve.toolbox.image.feature.descriptor.MultiThreadedSignatureExt
 import plugins.nherve.toolbox.image.feature.lbp.LBPToolbox;
 import plugins.nherve.toolbox.image.feature.lbp.LocalBinaryPattern;
 import plugins.nherve.toolbox.image.feature.region.IcyPixel;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 import plugins.nherve.toolbox.image.toolboxes.ColorSpaceTools;
@@ -76,13 +77,13 @@ public class LBPSignaturesExtractionModule extends WithoutGUIModuleDefaultImpl {
 		double r = getParameterAsDouble(context, PRM_R);
 		double t = getParameterAsDouble(context, PRM_T);
 
-		log("LBP P("+p+") R("+r+") T("+t+") V("+v+") I("+i+")");
+		info("LBP P("+p+") R("+r+") T("+t+") V("+v+") I("+i+")");
 		
 		LocalBinaryPattern desc = new LocalBinaryPattern(p, r, LBPToolbox.FUZZY_FUNCTION_STANDARD, t, isLogEnabled(), true, v, i);
 		desc.setFuzzyColorSpace(ColorSpaceTools.RGB_TO_I1H2H3);
 		
 		if (getParameterAsString(context, PRM_COLOR).equalsIgnoreCase(GRAY)) {	
-			log("LBP on gray levels");
+			info("LBP on gray levels");
 			desc.setFuzzyAllChannels(false);
 			desc.setFuzzyChannel(0);
 		} else {
@@ -91,7 +92,7 @@ public class LBPSignaturesExtractionModule extends WithoutGUIModuleDefaultImpl {
 			for (String cs : ColorSpaceTools.COLOR_SPACES) {
 				if (getParameterAsString(context, PRM_COLOR).equalsIgnoreCase(cs)) {
 					desc.setFuzzyColorSpace(ics);
-					log("LBP on 3 color channels ("+cs+")");
+					info("LBP on 3 color channels ("+cs+")");
 					break;
 				}
 			}
@@ -115,7 +116,7 @@ public class LBPSignaturesExtractionModule extends WithoutGUIModuleDefaultImpl {
 			signatureExtractor.setTm(tm);
 
 			putObject(context, getParameterInternalName(OBJ_TM), tm);
-			List<VectorSignature> sigs = SignatureExtractor.cast(signatureExtractor.extractSignatures(simg, squares));
+			List<DefaultVectorSignature> sigs = SignatureExtractor.cast(signatureExtractor.extractSignatures(simg, squares));
 			if (Thread.currentThread().isInterrupted() || (sigs == null)) {
 				return false;
 			}
@@ -127,11 +128,11 @@ public class LBPSignaturesExtractionModule extends WithoutGUIModuleDefaultImpl {
 
 			List<PixelSignatureData> myData = new ArrayList<PixelSignatureData>();
 			Iterator<IcyPixel> iPixels = pixels.iterator();
-			Iterator<VectorSignature> iSigs = sigs.iterator();
+			Iterator<DefaultVectorSignature> iSigs = sigs.iterator();
 			while (iPixels.hasNext()) {
 				PixelSignatureData aData = new PixelSignatureData();
 				aData.pix = iPixels.next();
-				aData.sig = (VectorSignature) (iSigs.next());
+				aData.sig = (DefaultVectorSignature) (iSigs.next());
 				myData.add(aData);
 			}
 
